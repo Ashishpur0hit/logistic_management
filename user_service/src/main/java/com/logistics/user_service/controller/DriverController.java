@@ -1,6 +1,7 @@
 package com.logistics.user_service.controller;
 
 import com.logistics.user_service.dto.DriverDTO;
+import com.logistics.user_service.entity.Driver;
 import com.logistics.user_service.response.CustomApiResponse;
 import com.logistics.user_service.service.DriverService;
 import jakarta.validation.Valid;
@@ -62,5 +63,8 @@ public class DriverController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+
 
 }

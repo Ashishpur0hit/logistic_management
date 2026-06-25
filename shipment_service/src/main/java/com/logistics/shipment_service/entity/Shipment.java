@@ -28,6 +28,7 @@ public class Shipment {
     private String trackingNumber;
 
     private UUID user_id;
+    private UUID driver_id;
 
 
     @NotBlank(message = "Pickup address can not be blank !")

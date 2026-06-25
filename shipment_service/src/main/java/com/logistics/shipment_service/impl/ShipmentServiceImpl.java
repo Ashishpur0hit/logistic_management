@@ -1,11 +1,14 @@
 package com.logistics.shipment_service.impl;
 
+import com.logistics.shipment_service.dto.AvailableDriverDTO;
 import com.logistics.shipment_service.entity.Shipment;
 import com.logistics.shipment_service.entity.ShipmentStatusHistory;
 import com.logistics.shipment_service.enums.ShipmentStatus;
 import com.logistics.shipment_service.event.PaymentEvent;
+import com.logistics.shipment_service.external.UserService;
 import com.logistics.shipment_service.repository.ShipmentRepository;
 import com.logistics.shipment_service.repository.ShipmentStatusHistoryRepository;
+import com.logistics.shipment_service.response.CustomApiResponse;
 import com.logistics.shipment_service.service.ShipmentService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,10 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Autowired
     ShipmentStatusHistoryRepository shipmentStatusHistoryRepository;
+
+
+    @Autowired
+    UserService userService;
 
     @Override
     @Transactional
@@ -69,6 +76,34 @@ public class ShipmentServiceImpl implements ShipmentService {
         shipmentStatusHistoryRepository.save(addhistory);
 
         System.out.println("handled");
+
+        assignDriver(event.getShipmentId());
+
+    }
+
+    private void assignDriver(Long shipmentId) {
+
+        CustomApiResponse<AvailableDriverDTO> response = userService.getAvailableDriver();
+        if (response.getSuccess())
+        {
+            AvailableDriverDTO driver = response.getBody();
+            Shipment shipment = shipmentRepository.findById(shipmentId).orElseThrow(()-> new RuntimeException("Shipment not found !"));
+            shipment.setDriver_id(UUID.fromString(driver.getDriver_id()));
+            shipment.setStatus(ShipmentStatus.ASSIGNED);
+            Shipment updatedShipment  = shipmentRepository.save(shipment);
+
+            ShipmentStatusHistory addhistory = ShipmentStatusHistory.builder()
+                    .updatedBy("SYSTEM")
+                    .status(updatedShipment.getStatus())
+                    .shipment(updatedShipment)
+                    .remark("Driver assigned to your Shipment")
+                    .build();
+
+            shipmentStatusHistoryRepository.save(addhistory);
+
+            // make a kafka event here publish driver{firstname , Lastname , DriverId} to DriverAssignedTopic which can be consumed by notification service in future
+        }
+        return;
 
     }
 }

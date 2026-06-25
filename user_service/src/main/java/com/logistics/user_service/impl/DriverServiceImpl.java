@@ -1,5 +1,6 @@
 package com.logistics.user_service.impl;
 
+import com.logistics.user_service.dto.AvailableDriverDTO;
 import com.logistics.user_service.dto.DriverDTO;
 import com.logistics.user_service.entity.Driver;
 import com.logistics.user_service.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -49,5 +51,20 @@ public class DriverServiceImpl implements DriverService {
         existingDriver.setAvailability(availability);
         Driver updatedDriver = driverRepository.save(existingDriver);
         return modelMapper.map(updatedDriver,DriverDTO.class);
+    }
+
+    @Override
+    public AvailableDriverDTO getAvailableDriver() {
+        List<Driver> availableDrivers = driverRepository.findByAvailability(true);
+        if (availableDrivers.isEmpty()) throw  new ResourceNotFoundException("Drivers are not available !");
+        Driver driver =  availableDrivers.get(0);
+        driver.setAvailability(false);
+        driverRepository.save(driver);
+        AvailableDriverDTO driverDTO = AvailableDriverDTO.builder()
+                .driver_id(driver.getDriverId())
+                .firstname(driver.getUser().getFirstname())
+                .lastname(driver.getUser().getLastname())
+                .build();
+        return driverDTO;
     }
 }

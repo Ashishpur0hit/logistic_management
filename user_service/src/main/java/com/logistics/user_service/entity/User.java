@@ -23,8 +23,7 @@ public class User {
 
     @Id
     @GeneratedValue(
-            strategy = GenerationType.UUID,
-            generator = "userId_generator"
+            strategy = GenerationType.UUID
     )
     private UUID user_id;
     private String firstname;

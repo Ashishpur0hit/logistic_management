@@ -19,8 +19,7 @@ public class Address {
 
     @Id
     @GeneratedValue(
-            strategy = GenerationType.UUID,
-            generator = "address_generator"
+            strategy = GenerationType.UUID
     )
     private UUID address_id;
 

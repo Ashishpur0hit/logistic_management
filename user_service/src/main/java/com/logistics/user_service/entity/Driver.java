@@ -13,8 +13,7 @@ import lombok.*;
 public class Driver {
     @Id
     @GeneratedValue(
-            strategy = GenerationType.UUID,
-            generator = "driver_generator"
+            strategy = GenerationType.UUID
     )
     private String driverId;
 

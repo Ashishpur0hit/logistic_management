@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,4 +18,7 @@ public interface DriverRepository extends JpaRepository<Driver , UUID> {
        WHERE d.user.user_id = :userId
        """)
     Optional<Driver> findByUser_UserId(UUID userId);
+
+
+    List<Driver> findByAvailability(Boolean availability);
 }
