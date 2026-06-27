@@ -44,4 +44,21 @@ public class ShipmentController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+
+    @PutMapping("/delivered/{shipmentId}")
+    public ResponseEntity<CustomApiResponse<Shipment>> markShipmentDelivered(@PathVariable Long shipmentId)
+    {
+        Shipment shipment = shipmentService.markShipmentDelivered(shipmentId);
+        CustomApiResponse<Shipment> response = CustomApiResponse.<Shipment>builder()
+                .success(true)
+                .body(shipment)
+                .message("Shipment tracked successfully !")
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
 }

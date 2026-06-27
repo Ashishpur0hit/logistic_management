@@ -156,4 +156,26 @@ public class ShipmentServiceImpl implements ShipmentService {
         return;
 
     }
+
+
+    @Override
+    public Shipment markShipmentDelivered(Long shipmentId)
+    {
+        Shipment shipment = shipmentRepository.findById(shipmentId).orElseThrow(()-> new RuntimeException("Shipment does not exists !"));
+        shipment.setStatus(ShipmentStatus.DELIVERED);
+        Shipment savedShipment = shipmentRepository.save(shipment);
+
+        ShipmentStatusHistory history = ShipmentStatusHistory.builder()
+                .updatedBy("DRIVER")
+                .status(ShipmentStatus.DELIVERED)
+                .remark("Shipment Delivered")
+                .shipment(savedShipment)
+                .build();
+
+        shipmentStatusHistoryRepository.save(history);
+
+
+        userService.updateDriverAvailability(shipment.getDriver_id() , true);
+        return savedShipment;
+    }
 }

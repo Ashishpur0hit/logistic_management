@@ -13,4 +13,6 @@ public interface ShipmentService {
     void handlePaymentSuccess(PaymentEvent event);
 
     ShipmentDetailDTO trackShipment(String tackingNumber);
+
+    Shipment markShipmentDelivered(Long shipmentId);
 }

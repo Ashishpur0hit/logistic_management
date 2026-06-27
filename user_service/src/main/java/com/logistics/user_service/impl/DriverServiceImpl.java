@@ -55,11 +55,11 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverDTO updateDriver(UUID userId, Boolean availability) {
-        Driver existingDriver = driverRepository.findByUser_UserId(userId).orElseThrow(()-> new ResourceNotFoundException("Driver not Found !!"));
+    public void updateDriver(String driverId, Boolean availability) {
+        Driver existingDriver = driverRepository.findById(driverId).orElseThrow(()-> new ResourceNotFoundException("Driver not Found !!"));
         existingDriver.setAvailability(availability);
-        Driver updatedDriver = driverRepository.save(existingDriver);
-        return modelMapper.map(updatedDriver,DriverDTO.class);
+        driverRepository.save(existingDriver);
+        return ;
     }
 
     @Transactional

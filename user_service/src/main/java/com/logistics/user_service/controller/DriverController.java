@@ -51,18 +51,7 @@ public class DriverController {
 
 
 
-    //update Availability
-    @PutMapping("/update/{userId}")
-    public  ResponseEntity<CustomApiResponse<DriverDTO>> updateDriverAvailability(@PathVariable UUID userId,@RequestParam Boolean availability)
-    {
-        DriverDTO driver = driverService.updateDriver(userId,availability);
-        CustomApiResponse<DriverDTO> response = CustomApiResponse.<DriverDTO>builder()
-                .success(true)
-                .message("Driver updated successfully !")
-                .body(driver)
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+
 
 
 

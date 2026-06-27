@@ -14,7 +14,7 @@ public interface DriverService {
 
     DriverDTO getDriver(UUID userId);
 
-    DriverDTO updateDriver(UUID userId , Boolean availiblity);
+    void updateDriver(String driverId , Boolean availiblity);
 
     AvailableDriverDTO getAvailableDriver();
 
