@@ -21,4 +21,6 @@ public interface DriverRepository extends JpaRepository<Driver , UUID> {
 
 
     List<Driver> findByAvailability(Boolean availability);
+
+    Optional<Driver> findFirstByAvailabilityTrue();
 }

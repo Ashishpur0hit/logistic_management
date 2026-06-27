@@ -30,4 +30,10 @@ public class DriverDTO {
     @NotBlank(message = "License number can not be blank !")
     private String license_no;
 
+
+    private Double currentLatitude;
+
+
+    private Double currentLongitude;
+
 }

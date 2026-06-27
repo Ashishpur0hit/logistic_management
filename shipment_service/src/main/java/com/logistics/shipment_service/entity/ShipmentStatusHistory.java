@@ -1,5 +1,6 @@
 package com.logistics.shipment_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.logistics.shipment_service.enums.ShipmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +21,7 @@ public class ShipmentStatusHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shipment_status_id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;

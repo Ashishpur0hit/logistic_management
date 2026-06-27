@@ -26,6 +26,12 @@ public class Driver {
     private String license_no;
     private Boolean availability;
 
+    @Column(name = "current_latitude")
+    private Double currentLatitude;
+
+    @Column(name = "current_longitude")
+    private Double currentLongitude;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

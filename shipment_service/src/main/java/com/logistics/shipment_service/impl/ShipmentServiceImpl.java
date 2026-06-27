@@ -1,6 +1,9 @@
 package com.logistics.shipment_service.impl;
 
+import com.logistics.common.RedisDriver;
 import com.logistics.shipment_service.dto.AvailableDriverDTO;
+
+import com.logistics.shipment_service.dto.ShipmentDetailDTO;
 import com.logistics.shipment_service.entity.Shipment;
 import com.logistics.shipment_service.entity.ShipmentStatusHistory;
 import com.logistics.shipment_service.enums.ShipmentStatus;
@@ -12,8 +15,10 @@ import com.logistics.shipment_service.response.CustomApiResponse;
 import com.logistics.shipment_service.service.ShipmentService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,6 +36,16 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RedisTemplate<String,Object> redisTemplate;
+
+
+
+
+
+
+
 
     @Override
     @Transactional
@@ -79,6 +94,31 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         assignDriver(event.getShipmentId());
 
+    }
+
+    @Override
+    public ShipmentDetailDTO trackShipment(String trackingNumber) {
+        Shipment shipment = shipmentRepository.findByTrackingNumber(trackingNumber).orElseThrow(()-> new RuntimeException("Shipment not found !!"));
+        List<ShipmentStatusHistory> historyList = shipmentStatusHistoryRepository.findHistory(shipment.getShipment_id());
+        ShipmentDetailDTO shipmentDetail = ShipmentDetailDTO.builder()
+                .shipment_id(shipment.getShipment_id())
+                .currentStatus(shipment.getStatus())
+                .shipmentValue(shipment.getShipmentValue())
+                .history(historyList)
+                .dropAddress(shipment.getDropAddress())
+                .pickupAddress(shipment.getPickupAddress())
+                .shippingCost(shipment.getShippingCost())
+                .trackingNumber(shipment.getTrackingNumber())
+                .build();
+
+        RedisDriver driver = (RedisDriver) redisTemplate.opsForValue().get("driver:location:"+shipment.getDriver_id());
+        if(driver!=null)
+        {
+            shipmentDetail.setLatitude(driver.getLatitude());
+            shipmentDetail.setLongitude(driver.getLongitude());
+            shipmentDetail.setDriverName(driver.getDriverName());
+        }
+        return shipmentDetail;
     }
 
     private void assignDriver(Long shipmentId) {

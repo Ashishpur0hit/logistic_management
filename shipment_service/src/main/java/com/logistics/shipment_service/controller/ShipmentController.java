@@ -1,5 +1,6 @@
 package com.logistics.shipment_service.controller;
 
+import com.logistics.shipment_service.dto.ShipmentDetailDTO;
 import com.logistics.shipment_service.entity.Shipment;
 import com.logistics.shipment_service.response.CustomApiResponse;
 import com.logistics.shipment_service.service.ShipmentService;
@@ -32,4 +33,15 @@ public class ShipmentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/track/{trackingNumber}")
+    public ResponseEntity<CustomApiResponse<ShipmentDetailDTO>> addShipment(@PathVariable String trackingNumber)
+    {
+        ShipmentDetailDTO shipmentDetailDTO = shipmentService.trackShipment(trackingNumber);
+        CustomApiResponse<ShipmentDetailDTO> response = CustomApiResponse.<ShipmentDetailDTO>builder()
+                .success(true)
+                .body(shipmentDetailDTO)
+                .message("Shipment tracked successfully !")
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
