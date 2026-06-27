@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface DriverRepository extends JpaRepository<Driver , UUID> {
+public interface DriverRepository extends JpaRepository<Driver , String> {
 
     @Query("""
        SELECT d

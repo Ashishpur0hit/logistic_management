@@ -4,6 +4,8 @@ import com.logistics.user_service.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

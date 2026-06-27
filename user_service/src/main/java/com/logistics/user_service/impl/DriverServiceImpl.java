@@ -74,15 +74,21 @@ public class DriverServiceImpl implements DriverService {
 
 
         return AvailableDriverDTO.builder()
-                .driver_id(driver.getDriverId())
+                .driver_id(String.valueOf(driver.getDriverId()))
                 .firstname(driver.getUser().getFirstname())
                 .lastname(driver.getUser().getLastname())
                 .build();
     }
 
+    @Override
+    public RedisDriver getDriverSnapshot(UUID driverId) {
+        Driver driver = driverRepository.findById(String.valueOf(driverId)).orElseThrow(()-> new ResourceNotFoundException("Driver does not exist !"));
+        return saveRedis(driver);
+    }
 
 
-    public void saveRedis(Driver savedDriver)
+
+    public RedisDriver saveRedis(Driver savedDriver)
     {
         RedisDriver driver = RedisDriver.builder()
                 .latitude(savedDriver.getCurrentLatitude())
@@ -95,6 +101,8 @@ public class DriverServiceImpl implements DriverService {
                 "driver:location:"+driver.getDriverId(),
                 driver
         );
+
+        return driver;
     }
 
 

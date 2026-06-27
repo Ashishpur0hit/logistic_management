@@ -117,7 +117,17 @@ public class ShipmentServiceImpl implements ShipmentService {
             shipmentDetail.setLatitude(driver.getLatitude());
             shipmentDetail.setLongitude(driver.getLongitude());
             shipmentDetail.setDriverName(driver.getDriverName());
+            return shipmentDetail;
         }
+
+        driver = userService.getDriverSnapshot(String.valueOf(shipment.getDriver_id())).getBody();
+
+        shipmentDetail.setLatitude(driver.getLatitude());
+        shipmentDetail.setLongitude(driver.getLongitude());
+        shipmentDetail.setDriverName(driver.getDriverName());
+
+
+
         return shipmentDetail;
     }
 

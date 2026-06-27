@@ -1,5 +1,6 @@
 package com.logistics.user_service.service;
 
+import com.logistics.common.RedisDriver;
 import com.logistics.user_service.dto.AvailableDriverDTO;
 import com.logistics.user_service.dto.DriverDTO;
 import com.logistics.user_service.entity.Driver;
@@ -16,4 +17,6 @@ public interface DriverService {
     DriverDTO updateDriver(UUID userId , Boolean availiblity);
 
     AvailableDriverDTO getAvailableDriver();
+
+    RedisDriver getDriverSnapshot(UUID driverId);
 }
