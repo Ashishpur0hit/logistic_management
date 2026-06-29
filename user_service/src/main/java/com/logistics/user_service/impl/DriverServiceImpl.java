@@ -90,11 +90,11 @@ public class DriverServiceImpl implements DriverService {
 
     public RedisDriver saveRedis(Driver savedDriver)
     {
-        RedisDriver driver = RedisDriver.builder()
-                .latitude(savedDriver.getCurrentLatitude())
+        RedisDriver driver  = RedisDriver.builder()
                 .longitude(savedDriver.getCurrentLongitude())
+                .latitude(savedDriver.getCurrentLatitude())
+                .driverName(savedDriver.getUser().getFirstname()+ " " +savedDriver.getUser().getLastname() )
                 .driverId(savedDriver.getDriverId())
-                .driverName(savedDriver.getUser().getFirstname() + " " + savedDriver.getUser().getLastname())
                 .build();
         // Save Driver Location to redis
         redisTemplate.opsForValue().set(

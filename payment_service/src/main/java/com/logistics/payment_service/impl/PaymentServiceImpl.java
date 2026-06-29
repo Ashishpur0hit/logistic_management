@@ -10,6 +10,7 @@ import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.razorpay.Utils;
+import jakarta.transaction.Transactional;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +43,7 @@ public class PaymentServiceImpl implements PaymentService {
     // gateway se transaction hone k baad jo transaction ka signature hoga  wo wapis yahan verify hone k baad databse pe write hoga
 
 
+    @Transactional
     @Override
     public String createOrderId(BigDecimal amount,Long shipmentId) throws RazorpayException {
 
