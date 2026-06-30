@@ -7,12 +7,14 @@ import com.logistics.user_service.dto.DriverDTO;
 import com.logistics.user_service.entity.Driver;
 import com.logistics.user_service.entity.User;
 import com.logistics.user_service.exception.ResourceNotFoundException;
+import com.logistics.user_service.redis.RedisUtils;
 import com.logistics.user_service.repository.DriverRepository;
 import com.logistics.user_service.repository.UserRepository;
 import com.logistics.user_service.service.DriverService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,8 @@ public class DriverServiceImpl implements DriverService {
     ModelMapper modelMapper;
 
     @Autowired
-    RedisTemplate<String, Object> redisTemplate;
+    RedisUtils redisUtils;
+
 
     @Override
     public DriverDTO addDriver(UUID userId, DriverDTO driverDTO) {
@@ -69,8 +72,17 @@ public class DriverServiceImpl implements DriverService {
         driver.setAvailability(false);
         Driver savedDriver =driverRepository.save(driver);
 
+
+        RedisDriver redisdriver  = RedisDriver.builder()
+                .longitude(savedDriver.getCurrentLongitude())
+                .latitude(savedDriver.getCurrentLatitude())
+                .driverName(savedDriver.getUser().getFirstname()+ " " +savedDriver.getUser().getLastname() )
+                .driverId(savedDriver.getDriverId())
+                .build();
+
         // save driver location in redis
-        saveRedis(savedDriver);
+        String key = "driver:location:"+redisdriver.getDriverId();
+        redisUtils.saveRedis(key,redisdriver);
 
 
         return AvailableDriverDTO.builder()
@@ -83,27 +95,16 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public RedisDriver getDriverSnapshot(UUID driverId) {
         Driver driver = driverRepository.findById(String.valueOf(driverId)).orElseThrow(()-> new ResourceNotFoundException("Driver does not exist !"));
-        return saveRedis(driver);
-    }
-
-
-
-    public RedisDriver saveRedis(Driver savedDriver)
-    {
-        RedisDriver driver  = RedisDriver.builder()
-                .longitude(savedDriver.getCurrentLongitude())
-                .latitude(savedDriver.getCurrentLatitude())
-                .driverName(savedDriver.getUser().getFirstname()+ " " +savedDriver.getUser().getLastname() )
-                .driverId(savedDriver.getDriverId())
+        RedisDriver redisdriver  = RedisDriver.builder()
+                .longitude(driver.getCurrentLongitude())
+                .latitude(driver.getCurrentLatitude())
+                .driverName(driver.getUser().getFirstname()+ " " +driver.getUser().getLastname() )
+                .driverId(driver.getDriverId())
                 .build();
-        // Save Driver Location to redis
-        redisTemplate.opsForValue().set(
-                "driver:location:"+driver.getDriverId(),
-                driver
-        );
-
-        return driver;
+        return redisUtils.saveRedis("driver:location:"+driver.getDriverId(),redisdriver);
     }
+
+
 
 
 }

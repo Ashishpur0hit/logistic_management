@@ -13,15 +13,15 @@ public class GatewayConfig {
     {
         return builder.routes()
 
-                .route("user_service", r -> r
+                .route("user-service", r -> r
                         .path("/v1/api/user/**" , "/v1/api/auth/**", "/v1/api/driver/**" , "/v1/api/admin/**" , "/v1/api/internal/**")
                         .uri("lb://USER-SERVICE"))
 
-                .route("shipment_service", r -> r
+                .route("shipment-service", r -> r
                         .path("/v1/api/shipment/**")
                         .uri("lb://SHIPMENT-SERVICE"))
 
-                .route("payment_service", r -> r
+                .route("payment-service", r -> r
                         .path("/v1/api/payment/**")
                         .uri("lb://PAYMENT-SERVICE"))
 

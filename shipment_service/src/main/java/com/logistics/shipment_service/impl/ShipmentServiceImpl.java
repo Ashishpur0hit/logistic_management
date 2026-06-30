@@ -9,6 +9,7 @@ import com.logistics.shipment_service.entity.ShipmentStatusHistory;
 import com.logistics.shipment_service.enums.ShipmentStatus;
 import com.logistics.shipment_service.event.PaymentEvent;
 import com.logistics.shipment_service.external.UserService;
+import com.logistics.shipment_service.redis.RedisUtils;
 import com.logistics.shipment_service.repository.ShipmentRepository;
 import com.logistics.shipment_service.repository.ShipmentStatusHistoryRepository;
 import com.logistics.shipment_service.response.CustomApiResponse;
@@ -38,13 +39,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     UserService userService;
 
     @Autowired
-    RedisTemplate<String,Object> redisTemplate;
-
-
-
-
-
-
+    RedisUtils redisUtils;
 
 
     @Override
@@ -111,7 +106,8 @@ public class ShipmentServiceImpl implements ShipmentService {
                 .trackingNumber(shipment.getTrackingNumber())
                 .build();
 
-        RedisDriver driver = (RedisDriver) redisTemplate.opsForValue().get("driver:location:"+shipment.getDriver_id());
+        String key = "driver:location:"+ shipment.getDriver_id();
+        RedisDriver driver = (RedisDriver) redisUtils.getRedis(key);
         if(driver!=null)
         {
             shipmentDetail.setLatitude(driver.getLatitude());
