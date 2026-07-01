@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Razorpay Test</title>
+</head>
+<body>
+
+<h2>Shipment Payment Demo</h2>
+
+<button id="pay-btn">
+    Pay 
+</button>
+
+<br><br>
+
+<h3>Payment Response</h3>
+
+<p id="payment-response">
+    No payment made yet.
+</p>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+document.getElementById("pay-btn")
+.addEventListener("click", function () {
+
+    var options = {
+
+        key: "rzp_test_T2N2GAwPRATnKt",
+
+        amount: 17500,
+
+        currency: "INR",
+
+        name: "Logistics Platform",
+
+        description: "Shipment Payment",
+
+        order_id: "order_T8KQHAaYZSAqIi",
+
+        handler: function (response) {
+
+            document.getElementById("payment-response").innerHTML = `
+                <b>Payment Successful</b><br><br>
+
+                <b>Payment ID:</b>
+                ${response.razorpay_payment_id}
+                <br><br>
+
+                <b>Order ID:</b>
+                ${response.razorpay_order_id}
+                <br><br>
+
+                <b>Signature:</b>
+                ${response.razorpay_signature}
+            `;
+
+            console.log(response);
+        },
+
+        prefill: {
+            name: "Ashish",
+            email: "ashish@gmail.com",
+            contact: "9999999999"
+        },
+
+        theme: {
+            color: "#3399cc"
+        }
+    };
+
+    var rzp = new Razorpay(options);
+
+    rzp.open();
+});
+</script>
+
+</body>
+</html>
