@@ -106,23 +106,24 @@ public class ShipmentServiceImpl implements ShipmentService {
                 .trackingNumber(shipment.getTrackingNumber())
                 .build();
 
-        String key = "driver:location:"+ shipment.getDriver_id();
-        RedisDriver driver = (RedisDriver) redisUtils.getRedis(key);
-        if(driver!=null)
+        if(shipment.getDriver_id()!=null)
         {
+            String key = "driver:location:"+ shipment.getDriver_id();
+            RedisDriver driver = (RedisDriver) redisUtils.getRedis(key);
+            if(driver!=null)
+            {
+                shipmentDetail.setLatitude(driver.getLatitude());
+                shipmentDetail.setLongitude(driver.getLongitude());
+                shipmentDetail.setDriverName(driver.getDriverName());
+                return shipmentDetail;
+            }
+
+            driver = userService.getDriverSnapshot(String.valueOf(shipment.getDriver_id())).getBody();
+
             shipmentDetail.setLatitude(driver.getLatitude());
             shipmentDetail.setLongitude(driver.getLongitude());
             shipmentDetail.setDriverName(driver.getDriverName());
-            return shipmentDetail;
         }
-
-        driver = userService.getDriverSnapshot(String.valueOf(shipment.getDriver_id())).getBody();
-
-        shipmentDetail.setLatitude(driver.getLatitude());
-        shipmentDetail.setLongitude(driver.getLongitude());
-        shipmentDetail.setDriverName(driver.getDriverName());
-
-
 
         return shipmentDetail;
     }
@@ -169,8 +170,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                 .build();
 
         shipmentStatusHistoryRepository.save(history);
-
-
+        redisUtils.deleteRedis("driver:location:"+shipment.getDriver_id());
         userService.updateDriverAvailability(shipment.getDriver_id() , true);
         return savedShipment;
     }

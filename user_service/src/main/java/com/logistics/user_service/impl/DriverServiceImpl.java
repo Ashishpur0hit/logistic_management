@@ -45,7 +45,7 @@ public class DriverServiceImpl implements DriverService {
         User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not Found !!"));
         Driver newdriver = modelMapper.map(driverDTO, Driver.class);
         newdriver.setUser(user);
-        newdriver.setAvailability(false);
+        newdriver.setAvailability(true);
         Driver savedDriver = driverRepository.save(newdriver);
 
         return modelMapper.map(savedDriver, DriverDTO.class);

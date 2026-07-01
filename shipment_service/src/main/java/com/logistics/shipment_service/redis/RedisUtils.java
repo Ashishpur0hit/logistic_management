@@ -19,6 +19,10 @@ public class RedisUtils {
         return  redisTemplate.opsForValue().get(key);
     }
 
+    public void deleteRedis(String key) {
+        redisTemplate.delete(key);
+    }
+
 
 
 }

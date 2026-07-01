@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
-@FeignClient(url = "http://localhost:8081/v1/api/internal",name = "user-service")
+@FeignClient(name = "user-service",path = "/v1/api/internal")
 public interface UserService {
 
     @GetMapping("/get-available-driver")
